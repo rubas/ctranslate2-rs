@@ -91,6 +91,22 @@ jobs:
         run: cargo test --no-default-features -F "all-tokenizers,whisper,hub,${{ matrix.backend }}" --tests --no-run
         if: ${{ matrix.backend == 'mkl' || matrix.backend == 'dnnl' }}
 
+  build-linux-arm:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: dnnl
+          cache-on-failure: true
+      - uses: jdx/mise-action@v5
+        with:
+          cache: true
+      - name: Link tests
+        run: cargo test -p ct2rs --no-default-features -F "all-tokenizers,whisper,hub,dnnl" --tests --no-run
+
   build-windows:
     strategy:
       fail-fast: false
